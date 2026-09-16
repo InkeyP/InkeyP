@@ -1,0 +1,13 @@
+{
+  "name": "inkey-profile-assets",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "update:cards": "node scripts/update-cards.mjs",
+    "test": "node --test scripts/update-cards.test.mjs"
+  },
+  "engines": { "node": "24.x" },
+  "dependencies": {
+    "@stats-organization/github-readme-stats-core": "2.1.3"
+  }
+}
