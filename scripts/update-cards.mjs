@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { patchStatsCore } from './update-cards-compat.mjs';
 
 export const palettes = {
   light: { bg: 'e9edf5', title: '256b83', text: '3a4054', accent: '408774' },
@@ -68,6 +69,7 @@ async function main() {
   if (!/^[a-zA-Z0-9-]+$/.test(username)) throw new Error('Invalid GitHub username.');
   // Token remains in process memory; never put it in files, arguments, or logs.
   process.env.PAT_1 = process.env.GITHUB_TOKEN || execFileSync('gh', ['auth', 'token'], { encoding: 'utf8' }).trim();
+  await patchStatsCore();
   const core = await import('@stats-organization/github-readme-stats-core');
   const now = new Date();
   const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 30));

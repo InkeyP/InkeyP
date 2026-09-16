@@ -1,6 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { activitySvg, generateCards, palettes, validCard } from './update-cards.mjs';
+import { readFile } from 'node:fs/promises';
+import { usePublicStarCount } from './update-cards-compat.mjs';
+
+test('pinned stats core uses the public star count and the patch is idempotent', async () => {
+  const source = await readFile(new URL('./fetchers/stats.js', import.meta.resolve('@stats-organization/github-readme-stats-core')), 'utf8');
+  const patched = usePublicStarCount(source);
+  assert.doesNotMatch(patched, /stargazers/);
+  assert.match(patched, /node\.stargazerCount/);
+  assert.match(patched, /curr\.stargazerCount/);
+  assert.equal(usePublicStarCount(patched), patched);
+  assert.throws(() => usePublicStarCount('stargazers { totalCount } changed upstream'));
+});
 
 const days = Array.from({ length: 31 }, (_, i) => ({
   date: new Date(Date.UTC(2026, 7, 1 + i)).toISOString().slice(0, 10), contributionCount: 0,
